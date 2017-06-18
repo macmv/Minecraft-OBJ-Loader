@@ -36,14 +36,47 @@ function fromOBJ(file) {
 }
 
 function to_minecraft_function(arr, block, offset_x, offset_y, offset_z) {
+  top_most = null;
+  bottom_most = null;
+  north_most = null;
+  south_most = null;
+  east_most = null;
+  west_most = null;
   functions = [];
   for (var i = 0; i < arr.length; i++) {
     temp_arr = arr[i].generate();
     for (var v = 0; v < temp_arr.length; v++) {
+      if (temp_arr[v].y + offset_y > top_most || top_most === null) {
+        top_most = temp_arr[v].y + offset_y;
+      }
+      if (temp_arr[v].y + offset_y < bottom_most || bottom_most === null) {
+        bottom_most = temp_arr[v].y + offset_y;
+      }
+      if (temp_arr[v].z + offset_z < north_most || north_most === null) {
+        north_most = temp_arr[v].z + offset_z;
+      }
+      if (temp_arr[v].z + offset_z > south_most || south_most === null) {
+        south_most = temp_arr[v].z + offset_z;
+      }
+      if (temp_arr[v].x + offset_x > east_most || east_most === null) {
+        east_most = temp_arr[v].x + offset_x;
+      }
+      if (temp_arr[v].x + offset_x < west_most || west_most === null) {
+        west_most = temp_arr[v].x + offset_x;
+      }
       functions.push("setblock " + (temp_arr[v].x + offset_x) + " " + (temp_arr[v].y + offset_y) + " " + (temp_arr[v].z + offset_z) + " " + block);
     }
   }
-  return functions.join("\n")
+  var res = {};
+  res.size = functions.length;
+  res.function = remove_duplicates(functions).join("\n");
+  res.top = top_most;
+  res.bottom = bottom_most;
+  res.north = north_most;
+  res.south = south_most;
+  res.east = east_most;
+  res.west = west_most;
+  return res;
 }
 
 function remove_duplicates(list) {
@@ -171,6 +204,10 @@ Face.prototype.get_points = function () {
 var blob;
 var faces;
 var file;
+var x_offset = parseInt(document.getElementById("x").value);
+var y_offset = parseInt(document.getElementById("y").value);
+var z_offset = parseInt(document.getElementById("z").value);
+var block = document.getElementById("block").value;
 var size_text = document.getElementById("size");
 var top_text = document.getElementById("top");
 var bottom_text = document.getElementById("bottom");
@@ -178,17 +215,43 @@ var north_text = document.getElementById("north");
 var south_text = document.getElementById("south");
 var east_text = document.getElementById("east");
 var west_text = document.getElementById("west");
+var warning_text = document.getElementById("warning");
 function make_function() {
-  file = to_minecraft_function(faces, "stone", 0, 100, 100);
-  blob = new Blob([file], {type: "text/plain;charset=ascii"});
+  x_offset = parseInt(document.getElementById("x").value);
+  y_offset = parseInt(document.getElementById("y").value);
+  z_offset = parseInt(document.getElementById("z").value);
+  block = document.getElementById("block").value;
+  file_and_data = to_minecraft_function(faces, block, x_offset, y_offset, z_offset);
+  size_text.innerHTML = file_and_data.size;
+  top_text.innerHTML = file_and_data.top;
+  bottom_text.innerHTML = file_and_data.bottom;
+  north_text.innerHTML = file_and_data.north;
+  south_text.innerHTML = file_and_data.south;
+  east_text.innerHTML = file_and_data.east;
+  west_text.innerHTML = file_and_data.west;
+  if (file_and_data.top > 255) {
+    if (file_and_data.bottom < 0) {
+      warning_text.innerHTML = "WARNING! This will go above and below the world";
+      warning_text.style.color = "red";
+    } else {
+      warning_text.innerHTML = "WARNING! This will go above the world"
+      warning_text.style.color = "red";
+    }
+  } else {
+    if (file_and_data.bottom < 0) {
+      warning_text.innerHTML = "WARNING! This will go below the world"
+      warning_text.style.color = "red";
+    } else {
+      warning_text.innerHTML = "All good!"
+      warning_text.style.color = "green";
+    }
+  }
+  blob = new Blob([file_and_data.function], {type: "text/plain;charset=ascii"});
 }
 
 function download_function() {
   saveAs(blob, "function.mcfunction");
 }
-
-//var textarea = document.getElementById("text_stuff");
-//textarea.value = 
 
 function handleFile(files) {
   for (var i = 0, f; f = files[i]; i++) {

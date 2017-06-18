@@ -7,9 +7,16 @@
   margin: 10pt;
 }
 
-.generate_button {
-  font-size: 30pt;
+#generate_button {
+  font-size: 25pt;
   margin: 10pt;
+  background-color: darkorange;
+}
+
+#download_button {
+  font-size: 25pt;
+  margin: 10pt;
+  background-color: darkorange;
 }
 
 .loc_input {
@@ -22,4 +29,21 @@ code {
 
 #block {
   text-align: center;
+}
+
+.text-input {
+  font-size: 18pt;
+  border-radius: 2pt;
+  border-width: 0pt;
+  background-color: darkorange;
+  box-shadow: 0pt 1pt 2pt grey;
+  margin: 5pt
+}
+
+#warning {
+  display: inline-block;
+  color: #cca300;
+  background-color: #DDDDDD;
+  font-family: monospace;
+  font-weight: bold;
 }

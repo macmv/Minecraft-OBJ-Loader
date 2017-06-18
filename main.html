@@ -3,63 +3,118 @@
 <head>
 	<title></title>
   <link rel="stylesheet" type="text/css" href="./css.css">
+  <title>JENapp</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://code.getmdl.io/1.3.0/material.orange-deep_orange.min.css" />
+  <script defer="" src="https://code.getmdl.io/1.3.0/material.min.js"></script>
+  <meta name="mobile-web-app-capable" content="yes">
+  <link rel="icon" sizes="192x192" href="nice-highres.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="JENapp">
+  <link rel="apple-touch-icon" href="webicon.png">
+  <link rel="stylesheet" href="apptest.css">
 </head>
 <body>
+  <style>
+  .demo-layout-transparent {
+    background: url('../assets/demos/transparent.jpg') center / cover;
+  }
+  .demo-layout-transparent .mdl-layout__header,
+  .demo-layout-transparent .mdl-layout__drawer-button {
+    /* This background is dark, so we set text to white. Use 87% black instead if
+       your background is light. */
+    color: #0e0e0e;
+  }
+  </style>
+  
+  <div class="demo-layout-transparent mdl-layout mdl-js-layout">
+    <header class="mdl-layout__header mdl-layout__header-transparent">
+      <div class="mdl-layout__header-row">
+        <!-- Title -->
+        <span class="mdl-layout-title">Minecraft OBJ Loader</span>
+        <!-- Add spacer, to align navigation to the right -->
+        <div class="mdl-layout-spacer"></div>
+        <!-- Navigation -->
+        <nav class="mdl-navigation">
+          <a class="mdl-navigation__link" href="">Home</a>
+        </nav>
+      </div>
+    </header>
+    <div class="mdl-layout__drawer">
+      <span class="mdl-layout-title">Macmv</span>
+      <nav class="mdl-navigation">
+        <a class="mdl-navigation__link" href="">Home</a>
+      </nav>
+    </div>
+    <main class="mdl-layout__content">
+      <center>
+      <div id="main" align="center">
+        Set offset of model in-game (the coordinates 0 0 0 in the model will be at this location):
+        <br>
+        X: <input type="number" class="loc_input text-input" value="0" id="x">
+        Y: <input type="number" class="loc_input text-input" value="0" id="y">
+        Z: <input type="number" class="loc_input text-input" value="0" id="z">
+        <br>
+        Choose your block:
+        <br>
+        <input type="text" id="block" value="stone" class="text-input">
+        <br>
+        Choose <code>.obj</code> file to load:
+        <input type="file" id="myFile" onchange="handleFile(this.files)">
+        <br>
+        <p style="font-weight: bold; margin: 5pt">WARNING! Will lag and freeze web page! DON'T CLOSE TAB WHILE GENERATING!</p>
+        <p style="font-size: 8pt; margin: 5pt; margin-bottom: 0pt;">(Well you can, but it won't finish)</p>
+        <br>
+        Check this to remove duplicate functions (this will cause a lot more generation time, and most duplicates are removed all     ready, but this just makes absoleutly shure there are none):
+        <div style="display: inline-block;">
+        <label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="remove_duplicates">
+          <input type="checkbox" id="remove_duplicates" class="mdl-checkbox__input">
+        </label>
+        </div>
+        <br>
+        <button style="height:50pt;" onclick="make_function();" id="generate_button" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect">Generate</button>
+        <br>
+        Your function will be <code id="size">__</code> commands long.
+        <br>
+        <table>
+          <tr>
+            <td style="float: left;">Top-most block:</td>
+            <td><code id="top">__</code></td>
+          </tr>
+          <tr>
+            <td style="float: left;">Bottom-most block:</td>
+            <td><code id="bottom">__</code></td>
+          </tr>
+          <tr>
+            <td style="float: left;">North-most block:</td>
+            <td><code id="north">__</code></td>
+          </tr>
+          <tr>
+            <td style="float: left;">South-most block:</td>
+            <td><code id="south">__</code></td>
+          </tr>
+          <tr>
+            <td style="float: left;">East-most block:</td>
+            <td><code id="east">__</code></td>
+          </tr>
+          <tr>
+            <td style="float: left;">West-most block:</td>
+            <td><code id="west">__</code></td>
+          </tr>
+        </table>
+        <br>
+        <p id="warning">Not yet calculated</p>
+        <br>
+        Are you sure you want to download this function?
+        <br>
+        <button style="height:50pt;" onclick="download_function();" id="download_button" class="mdl-button mdl-js-button     mdl-button--raised mdl-js-ripple-effect">Download File</button>
+      </div>
+      </center>
+    </main>
+  </div>
+  
   <script src="./FileSaver.js"></script>
   <script src="./js.js"></script>
-  <center>
-  <div id="main" align="center">
-    Set offset of model in-game (the coordinates 0 0 0 in the model will be at this location):
-    <br>
-    X: <input type="number" class="loc_input" value="0">
-    Y: <input type="number" class="loc_input" value="0">
-    Z: <input type="number" class="loc_input" value="0">
-    <br>
-    Choose your block:
-    <br>
-    <input type="text" id="block" value="stone">
-    <br>
-    Choose <code>.obj</code> file to load:
-    <input type="file" id="myFile" onchange="handleFile(this.files)">
-    <br>
-    <p style="font-weight: bold; margin: 5pt">WARNING! Will lag and freeze web page! DON'T CLOSE TAB WHILE GENERATING!</p>
-    <p style="font-size: 8pt; margin: 5pt; margin-bottom: 0pt;">(Well you can, but it won't finish)</p>
-    <br>
-    <button style="height:50pt;" onclick="make_function();" class="generate_button">Generate</button>
-    <br>
-    Your function will be <code id="size">__</code> commands long.
-    <br>
-    <table>
-      <tr>
-        <td style="float: left;">Top-most block:</td>
-        <td><code id="top">__</code></td>
-      </tr>
-      <tr>
-        <td style="float: left;">Bottom-most block:</td>
-        <td><code id="bottom">__</code></td>
-      </tr>
-      <tr>
-        <td style="float: left;">North-most block:</td>
-        <td><code id="north">__</code></td>
-      </tr>
-      <tr>
-        <td style="float: left;">South-most block:</td>
-        <td><code id="south">__</code></td>
-      </tr>
-      <tr>
-        <td style="float: left;">East-most block:</td>
-        <td><code id="east">__</code></td>
-      </tr>
-      <tr>
-        <td style="float: left;">West-most block:</td>
-        <td><code id="west">__</code></td>
-      </tr>
-    </table>
-    <br>
-    Are you sure you want to download this function?
-    <br>
-    <button style="height:50pt;" onclick="download_function();" class="generate_button">Download File</button>
-  </div>
-  </center>
 </body>
 </html>
