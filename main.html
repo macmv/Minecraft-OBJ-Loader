@@ -2,12 +2,64 @@
 <html>
 <head>
 	<title></title>
-
+  <link rel="stylesheet" type="text/css" href="./css.css">
 </head>
-<body onclick="update_loc(event)"">
-  <center><canvas width="400" height="400" id="myCanvas" style="border: 1px solid; border-color: #000000"></canvas></center>
+<body>
+  <script src="./FileSaver.js"></script>
   <script src="./js.js"></script>
-  <input type="file" id="myFile" onchange="handleFile(this.files)">
-  <p id="output">YO</p>
+  <center>
+  <div id="main" align="center">
+    Set offset of model in-game (the coordinates 0 0 0 in the model will be at this location):
+    <br>
+    X: <input type="number" class="loc_input" value="0">
+    Y: <input type="number" class="loc_input" value="0">
+    Z: <input type="number" class="loc_input" value="0">
+    <br>
+    Choose your block:
+    <br>
+    <input type="text" id="block" value="stone">
+    <br>
+    Choose <code>.obj</code> file to load:
+    <input type="file" id="myFile" onchange="handleFile(this.files)">
+    <br>
+    <p style="font-weight: bold; margin: 5pt">WARNING! Will lag and freeze web page! DON'T CLOSE TAB WHILE GENERATING!</p>
+    <p style="font-size: 8pt; margin: 5pt; margin-bottom: 0pt;">(Well you can, but it won't finish)</p>
+    <br>
+    <button style="height:50pt;" onclick="make_function();" class="generate_button">Generate</button>
+    <br>
+    Your function will be <code id="size">__</code> commands long.
+    <br>
+    <table>
+      <tr>
+        <td style="float: left;">Top-most block:</td>
+        <td><code id="top">__</code></td>
+      </tr>
+      <tr>
+        <td style="float: left;">Bottom-most block:</td>
+        <td><code id="bottom">__</code></td>
+      </tr>
+      <tr>
+        <td style="float: left;">North-most block:</td>
+        <td><code id="north">__</code></td>
+      </tr>
+      <tr>
+        <td style="float: left;">South-most block:</td>
+        <td><code id="south">__</code></td>
+      </tr>
+      <tr>
+        <td style="float: left;">East-most block:</td>
+        <td><code id="east">__</code></td>
+      </tr>
+      <tr>
+        <td style="float: left;">West-most block:</td>
+        <td><code id="west">__</code></td>
+      </tr>
+    </table>
+    <br>
+    Are you sure you want to download this function?
+    <br>
+    <button style="height:50pt;" onclick="download_function();" class="generate_button">Download File</button>
+  </div>
+  </center>
 </body>
 </html>

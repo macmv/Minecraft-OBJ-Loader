@@ -1,0 +1,25 @@
+#main {
+  margin: 10pt;
+  width: 40%;
+}
+
+#myFile {
+  margin: 10pt;
+}
+
+.generate_button {
+  font-size: 30pt;
+  margin: 10pt;
+}
+
+.loc_input {
+  width: 40pt;
+}
+
+code {
+  background-color: #DDDDDD;
+}
+
+#block {
+  text-align: center;
+}

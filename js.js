@@ -1,5 +1,60 @@
-var canvas = document.getElementById("myCanvas");
-var ctx = canvas.getContext("2d");
+var Point = function (x, y, z) {
+  this.x = Math.round(x);
+  this.y = Math.round(y);
+  this.z = Math.round(z);
+}
+
+function fromOBJ(file) {
+  var list = file.split("\n");
+  var points = [];
+  var faces = [];
+  var temp_list = [];
+  var temp_arr = [];
+  var point_a;
+  var point_b;
+  var point_c;
+  var temp_points = [];
+  for (var i = 0; i < list.length; i++) {
+    if (list[i][0] + list[i][1] == "v ") {
+      temp_list = list[i].split(" ");
+      points.push(new Point(Math.round(parseFloat(temp_list[1])), Math.round(parseFloat(temp_list[2])), Math.round(parseFloat(temp_list[3]))));
+    }
+    if (list[i][0] == "f") {
+      temp_points = [];
+      for (var v = 1; v < 4; v++) {
+        temp_arr = list[i].split(" ")[v].split("/")
+        temp_points.push(parseInt(temp_arr[0]));
+      }
+      temp_points = remove_duplicates(temp_points);
+      point_a = points[temp_points[0] - 1]
+      point_b = points[temp_points[1] - 1]
+      point_c = points[temp_points[2] - 1]
+      faces.push(new Face(point_a, point_b, point_c));
+    }
+  }
+  return faces;
+}
+
+function to_minecraft_function(arr, block, offset_x, offset_y, offset_z) {
+  functions = [];
+  for (var i = 0; i < arr.length; i++) {
+    temp_arr = arr[i].generate();
+    for (var v = 0; v < temp_arr.length; v++) {
+      functions.push("setblock " + (temp_arr[v].x + offset_x) + " " + (temp_arr[v].y + offset_y) + " " + (temp_arr[v].z + offset_z) + " " + block);
+    }
+  }
+  return functions.join("\n")
+}
+
+function remove_duplicates(list) {
+  var new_list = [];
+  for (var i = 0; i < list.length; i++) {
+    if (!new_list.includes(list[i])) {
+      new_list.push(list[i])
+    }
+  }
+  return new_list;
+}
 
 function gen_points(point1, point2) {
   var x1 = point1.x;
@@ -28,7 +83,7 @@ function gen_points(point1, point2) {
 
     points.push(new Point(Math.round(this_x), Math.round(this_y), Math.round(this_z)));
   }
-  return points;
+  return remove_duplicates(points);
 }
 
 function swap_points(points, what_to_swap) {
@@ -113,54 +168,36 @@ Face.prototype.get_points = function () {
   return [this.a, this.b, this.c]
 };
 
-Face.prototype.draw = function() {
-  var v = this.generate();
-  for (var i = 0; i < v.length; i++) {
-    v[i].draw();
-  }
-};
-
-var Point = function (x, y, z) {
-  this.x = Math.round(x);
-  this.y = Math.round(y);
-  this.z = Math.round(z);
+var blob;
+var faces;
+var file;
+var size_text = document.getElementById("size");
+var top_text = document.getElementById("top");
+var bottom_text = document.getElementById("bottom");
+var north_text = document.getElementById("north");
+var south_text = document.getElementById("south");
+var east_text = document.getElementById("east");
+var west_text = document.getElementById("west");
+function make_function() {
+  file = to_minecraft_function(faces, "stone", 0, 100, 100);
+  blob = new Blob([file], {type: "text/plain;charset=ascii"});
 }
 
-Point.prototype.draw = function() {
-  ctx.fillStyle = "#FF0000";
-  ctx.fillRect(this.x * 20, this.z * 20, 20, 20);
-};
-
-var faces = [new Face(new Point(5, 0, 2), new Point(2, 0, 5), new Point(1, 0, 10))];
-
-function update_loc(event) {
-  faces = [new Face(new Point(Math.round(event.clientX / 20), 0, Math.round(event.clientY / 20)), new Point(10, 0, 10), new Point(1, 0, 10))]
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-  faces[0].draw();
-  ctx.beginPath();
-  for (var i = 1; i < 20; i++) {
-    ctx.moveTo(0, i * 20);
-    ctx.lineTo(400, i * 20);
-  }
-  for (var i = 1; i < 20; i++) {
-    ctx.moveTo(i * 20, 0);
-    ctx.lineTo(i * 20, 400);
-  }
-  ctx.stroke();
+function download_function() {
+  saveAs(blob, "function.mcfunction");
 }
+
+//var textarea = document.getElementById("text_stuff");
+//textarea.value = 
 
 function handleFile(files) {
   for (var i = 0, f; f = files[i]; i++) {
-    // Only process image files.
     var reader = new FileReader();
-    // Closure to capture the file information.
     reader.onload = (function(theFile) {
       return function(e) {
-        console.log(e.srcElement.result);
-        console.log(fromOBJ(e.srcElement.result));
+        faces = fromOBJ(e.srcElement.result);
       };
     })(f);
-    // Read in the image file as a data URL.
     reader.readAsText(f);
   }
 }
