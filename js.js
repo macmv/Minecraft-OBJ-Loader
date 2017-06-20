@@ -36,32 +36,32 @@ function fromOBJ(file) {
 }
 
 function to_minecraft_function(arr, block, offset_x, offset_y, offset_z) {
-  top_most = null;
-  bottom_most = null;
-  north_most = null;
-  south_most = null;
-  east_most = null;
-  west_most = null;
+  top_most = undefined;
+  bottom_most = undefined;
+  north_most = undefined;
+  south_most = undefined;
+  east_most = undefined;
+  west_most = undefined;
   functions = [];
   for (var i = 0; i < arr.length; i++) {
     temp_arr = arr[i].generate();
     for (var v = 0; v < temp_arr.length; v++) {
-      if (temp_arr[v].y + offset_y > top_most || top_most === null) {
+      if (temp_arr[v].y + offset_y > top_most || top_most === undefined) {
         top_most = temp_arr[v].y + offset_y;
       }
-      if (temp_arr[v].y + offset_y < bottom_most || bottom_most === null) {
+      if (temp_arr[v].y + offset_y < bottom_most || bottom_most === undefined) {
         bottom_most = temp_arr[v].y + offset_y;
       }
-      if (temp_arr[v].z + offset_z < north_most || north_most === null) {
+      if (temp_arr[v].z + offset_z < north_most || north_most === undefined) {
         north_most = temp_arr[v].z + offset_z;
       }
-      if (temp_arr[v].z + offset_z > south_most || south_most === null) {
+      if (temp_arr[v].z + offset_z > south_most || south_most === undefined) {
         south_most = temp_arr[v].z + offset_z;
       }
-      if (temp_arr[v].x + offset_x > east_most || east_most === null) {
+      if (temp_arr[v].x + offset_x > east_most || east_most === undefined) {
         east_most = temp_arr[v].x + offset_x;
       }
-      if (temp_arr[v].x + offset_x < west_most || west_most === null) {
+      if (temp_arr[v].x + offset_x < west_most || west_most === undefined) {
         west_most = temp_arr[v].x + offset_x;
       }
       functions.push("setblock " + (temp_arr[v].x + offset_x) + " " + (temp_arr[v].y + offset_y) + " " + (temp_arr[v].z + offset_z) + " " + block);
@@ -69,7 +69,11 @@ function to_minecraft_function(arr, block, offset_x, offset_y, offset_z) {
   }
   var res = {};
   res.size = functions.length;
-  res.function = remove_duplicates(functions).join("\n");
+  if (document.getElementById("remove_duplicates").checked) {
+    res.function = remove_duplicates(functions).join("\n");
+  } else {
+    res.function = functions.join("\n");
+  }
   res.top = top_most;
   res.bottom = bottom_most;
   res.north = north_most;
